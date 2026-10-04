@@ -5,6 +5,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:foxotale_ui/foxotale_ui.dart';
+import 'package:staff_app/features/auth/login_screen.dart';
 import 'package:staff_app/main.dart';
 
 void main() {
@@ -77,5 +79,31 @@ void main() {
     // The default role is GM/HM, which holds propertySetup, and the seeded
     // draft is unpublished — so sign-in goes to the wizard, not the shell.
     expect(find.text('Set up property'), findsOneWidget);
+  });
+
+  testWidgets('a real build shows neither the role picker nor social sign-up',
+      (tester) async {
+    // Debug builds carry both as review affordances. This is the shape a
+    // release build produces: FR-S001 resolves one role from the session, and
+    // social sign-up belongs to the Guest App.
+    tester.view.physicalSize = const Size(1206, 2622);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(MaterialApp(
+      theme: FoxTheme.light(),
+      home: LoginScreen(onSignedIn: (_) {}, reviewAffordances: false),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.text('SIGN IN AS'), findsNothing);
+    expect(find.text('Sign up with Apple'), findsNothing);
+    expect(find.text('Sign up with Google'), findsNothing);
+    expect(find.text('Sign up manually'), findsNothing);
+
+    // The ways in stay: email/password and mobile OTP.
+    expect(find.text('Email'), findsOneWidget);
+    expect(find.text('Mobile OTP'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Sign in'), findsOneWidget);
   });
 }

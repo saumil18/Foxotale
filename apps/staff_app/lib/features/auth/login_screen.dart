@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../app/build_config.dart';
 import 'package:foxotale_domain/foxotale_domain.dart';
 import 'package:foxotale_ui/foxotale_ui.dart';
 
@@ -16,9 +17,19 @@ enum _Method { emailPassword, mobileOtp }
 /// single-device rule below is presented to the user but is enforced only by
 /// the backend session store, never by this screen.
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key, required this.onSignedIn});
+  const LoginScreen({
+    super.key,
+    required this.onSignedIn,
+    this.reviewAffordances = FoxBuild.reviewSignIn,
+  });
 
   final ValueChanged<FoxRole> onSignedIn;
+
+  /// Whether to show the role picker and the social sign-up buttons. Both are
+  /// review affordances standing in for an identity provider — see
+  /// [FoxBuild.reviewSignIn] for why neither may ship. Injectable so the tests
+  /// can pump the shape a real build produces.
+  final bool reviewAffordances;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -31,6 +42,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final _otp = TextEditingController();
 
   _Method _method = _Method.emailPassword;
+
+  /// THE JWT SEAM. With the review picker on, this is whatever the person
+  /// chose. With it off, this default is the only thing standing in for the
+  /// role claim the backend will return — so a real build currently signs
+  /// everyone in as GM/HM. Replace it with the claim from the auth response
+  /// before this screen meets a real property; do not ship the picker instead.
   FoxRole _role = FoxRole.gmHm;
   bool _obscure = true;
   bool _otpSent = false;
@@ -116,11 +133,13 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             _BrandHeader(),
             const SizedBox(height: 32),
-            _RoleSelect(
-              role: _role,
-              onChanged: (r) => setState(() => _role = r),
-            ),
-            const SizedBox(height: 20),
+            if (widget.reviewAffordances) ...[
+              _RoleSelect(
+                role: _role,
+                onChanged: (r) => setState(() => _role = r),
+              ),
+              const SizedBox(height: 20),
+            ],
             SegmentedButton<_Method>(
               segments: const [
                 ButtonSegment(
@@ -181,22 +200,24 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 12),
             _SingleDeviceNotice(),
-            const SizedBox(height: 28),
-            _Divider(label: 'New to FoxOtale?'),
-            const SizedBox(height: 16),
-            _AppleButton(onPressed: () => widget.onSignedIn(_role)),
-            const SizedBox(height: 10),
-            _GoogleButton(onPressed: () => widget.onSignedIn(_role)),
-            const SizedBox(height: 10),
-            OutlinedButton(
-              onPressed: () => widget.onSignedIn(_role),
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(0, 52),
-                side: BorderSide(color: c.border),
-                foregroundColor: c.textPrimary,
+            if (widget.reviewAffordances) ...[
+              const SizedBox(height: 28),
+              _Divider(label: 'New to FoxOtale?'),
+              const SizedBox(height: 16),
+              _AppleButton(onPressed: () => widget.onSignedIn(_role)),
+              const SizedBox(height: 10),
+              _GoogleButton(onPressed: () => widget.onSignedIn(_role)),
+              const SizedBox(height: 10),
+              OutlinedButton(
+                onPressed: () => widget.onSignedIn(_role),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(0, 52),
+                  side: BorderSide(color: c.border),
+                  foregroundColor: c.textPrimary,
+                ),
+                child: const Text('Sign up manually'),
               ),
-              child: const Text('Sign up manually'),
-            ),
+            ],
           ],
         ),
       ),
