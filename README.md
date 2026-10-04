@@ -1,17 +1,56 @@
-# foxotale
+# FoxOtale
 
-A new Flutter project.
+Two Flutter apps for independent and boutique hotels: a brand-forward **Guest App**
+for direct booking, and a calmer, denser **Staff App** for property setup, daily
+operations and management intelligence.
 
-## Getting Started
+Only the Staff App exists today. It runs on an in-memory repository — there is no
+backend and no authentication yet.
 
-This project is a starting point for a Flutter application.
+## Layout
 
-A few resources to get you started if this is your first Flutter project:
+The split follows Solution Design §8.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```
+apps/
+  staff_app/            the Staff App (the only app so far)
+packages/
+  foxotale_ui/          Design System v1 in code — tokens, shared widgets,
+                        brand assets and the licensed fonts
+  foxotale_domain/      pure Dart: property/booking/room/task models, the
+                        role-permission matrix, Indian currency formatting
+docs/
+  design-system/        Design System v1 (PDF)
+  foxotale/             the approved Solution Design and architecture documents
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+`packages/foxotale_api` is named in the Solution Design but not created yet; it
+arrives with the first real client rather than as an empty folder.
+
+## Running the Staff App
+
+```bash
+cd apps/staff_app
+flutter pub get
+flutter run
+```
+
+## Tests
+
+Each package tests itself.
+
+```bash
+(cd apps/staff_app && flutter test)
+(cd packages/foxotale_ui && flutter test)
+```
+
+## Things worth knowing before changing code
+
+- **Colour literals in widgets are a bug.** Every colour comes from
+  `FoxColors` in `foxotale_ui`, and each token carries a measured contrast
+  ratio that the Design System PDF documents.
+- **Unauthorised actions are hidden, not disabled.** `Permissions` transcribes
+  the PRD §7 matrix cell by cell; the role hierarchy governs visibility scope,
+  not capability inheritance.
+- **Intelligence data is entered by hand in v1.** OTA/PMS auto-feeds are
+  Phase 3, so report screens need data-entry views, not just dashboards.

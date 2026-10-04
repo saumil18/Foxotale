@@ -1,0 +1,10 @@
+name: foxotale_domain
+description: FoxOtale business types shared by the Staff and Guest apps — property, booking, room and task models, the role/permission matrix, and Indian currency formatting.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.11.0
+
+dev_dependencies:
+  test: ^1.25.0
