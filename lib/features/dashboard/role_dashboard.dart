@@ -10,7 +10,6 @@ import '../../util/fox_format.dart';
 import '../../widgets/fox_common.dart';
 import '../../widgets/fox_stat_tile.dart';
 import '../../widgets/fox_status_chip.dart';
-import '../../widgets/fox_brand_text.dart';
 
 /// PRD P0-2 — each role lands on a dashboard scoped to its permissions.
 /// Owner sees money; a supervisor sees the shift queue.
@@ -27,8 +26,6 @@ class RoleDashboard extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        _Greeting(role: role),
-        const SizedBox(height: 20),
         if (context.canEdit(Capability.propertySetup) &&
             !repo.draft.published) ...[
           _SetupPrompt(onOpen: onOpenSetup),
@@ -66,42 +63,6 @@ class RoleDashboard extends StatelessWidget {
   }
 }
 
-class _Greeting extends StatelessWidget {
-  const _Greeting({required this.role});
-
-  final FoxRole role;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = context.fox;
-    final repo = context.repo;
-    final hour = DateTime.now().hour;
-    final part = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(part, style: context.type.h1),
-        const SizedBox(height: 4),
-        Row(
-          children: [
-            FoxRoleBadge(role: role.label),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FoxBrandText(repo.property.name,
-                  style: context.type.bodySm.copyWith(color: c.textMin),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-/// Setup is unfinished, so the property is not yet bookable. Says what is
-/// missing rather than nagging.
 class _SetupPrompt extends StatelessWidget {
   const _SetupPrompt({required this.onOpen});
 

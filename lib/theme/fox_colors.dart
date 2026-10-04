@@ -32,6 +32,10 @@ class FoxColors extends ThemeExtension<FoxColors> {
     required this.dangerTint,
     required this.infoTint,
     required this.onBrand,
+    required this.headerTop,
+    required this.headerBottom,
+    required this.glassFill,
+    required this.glassBorder,
   });
 
   final Color brandFlame;
@@ -70,6 +74,19 @@ class FoxColors extends ThemeExtension<FoxColors> {
 
   final Color onBrand;
 
+  /// The two ends of the signed-in header gradient. Both ends and every point
+  /// between them clear 5.0:1 against white, so the header can carry body text
+  /// anywhere on it — including under the sheen, which is capped for that
+  /// reason. Do not lighten either end towards the brand oranges: Fox Flame
+  /// measures 3.48:1 and would break the header's text.
+  final Color headerTop;
+  final Color headerBottom;
+
+  /// The frosted panel on the header — fill and hairline. Alpha values, meant
+  /// to sit on the gradient and nowhere else.
+  final Color glassFill;
+  final Color glassBorder;
+
   static const light = FoxColors(
     brandFlame: Color(0xFFFF4200),
     brandEmber: Color(0xFFEA5F04),
@@ -95,6 +112,10 @@ class FoxColors extends ThemeExtension<FoxColors> {
     dangerTint: Color(0xFFFAEAE9),
     infoTint: Color(0xFFE9F0F9),
     onBrand: Color(0xFFFFFFFF),
+    headerTop: Color(0xFF8E2E00),
+    headerBottom: Color(0xFF421200),
+    glassFill: Color(0x26FFFFFF),
+    glassBorder: Color(0x4DFFFFFF),
   );
 
   static const dark = FoxColors(
@@ -122,6 +143,10 @@ class FoxColors extends ThemeExtension<FoxColors> {
     dangerTint: Color(0xFF33191A),
     infoTint: Color(0xFF12243A),
     onBrand: Color(0xFF14100D),
+    headerTop: Color(0xFF3A1A0E),
+    headerBottom: Color(0xFF140D08),
+    glassFill: Color(0x1FFFFFFF),
+    glassBorder: Color(0x33FFFFFF),
   );
 
   @override
@@ -150,6 +175,10 @@ class FoxColors extends ThemeExtension<FoxColors> {
     Color? dangerTint,
     Color? infoTint,
     Color? onBrand,
+    Color? headerTop,
+    Color? headerBottom,
+    Color? glassFill,
+    Color? glassBorder,
   }) {
     return FoxColors(
       brandFlame: brandFlame ?? this.brandFlame,
@@ -176,6 +205,10 @@ class FoxColors extends ThemeExtension<FoxColors> {
       dangerTint: dangerTint ?? this.dangerTint,
       infoTint: infoTint ?? this.infoTint,
       onBrand: onBrand ?? this.onBrand,
+      headerTop: headerTop ?? this.headerTop,
+      headerBottom: headerBottom ?? this.headerBottom,
+      glassFill: glassFill ?? this.glassFill,
+      glassBorder: glassBorder ?? this.glassBorder,
     );
   }
 
@@ -208,6 +241,10 @@ class FoxColors extends ThemeExtension<FoxColors> {
       dangerTint: c(dangerTint, other.dangerTint),
       infoTint: c(infoTint, other.infoTint),
       onBrand: c(onBrand, other.onBrand),
+      headerTop: c(headerTop, other.headerTop),
+      headerBottom: c(headerBottom, other.headerBottom),
+      glassFill: c(glassFill, other.glassFill),
+      glassBorder: c(glassBorder, other.glassBorder),
     );
   }
 }
